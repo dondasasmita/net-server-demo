@@ -1,3 +1,6 @@
+// Attempt to read stream of data
+// Then store in NoSQL database
+
 // load net library
 const net = require("net");
 // load fs library
@@ -5,43 +8,24 @@ const fs = require("fs");
 
 // create server
 const server = net.createServer(socket => {
-  console.log(
-    "connection from : " +
-      socket.remoteAddress +
-      " and port : " +
-      socket.remotePort
-  );
-
-  // To append data to the existing file (need to FIX)
-  // socket.on("data", data => {
-  //   console.log(data);
-  //   filepath = "./files/test.txt";
-  //   fs.exists(filepath, exists => {
-  //     if (!exists) {
-  //       fs.writeFile(filepath, data, err => {
-  //         if (err) {
-  //           return console.log(err);
-  //         }
-  //         console.log("File was saved");
-  //       });
-  //     }
-  //     fs.appendFileSync(filepath, data);
-  //   });
-  // });
-
-  socket.on("data", data => {
-    console.log(data);
-    fs.writeFileSync("./files/test.txt", data);
-    console.log("File was saved");
+  let data;
+  socket.on("data", rawData => {
+    console.log(
+      `Receiving data from : ${socket.remoteAddress} Port : ${
+        socket.remotePort
+      }`
+    );
+    console.log(rawData);
   });
 
-  socket.once("close", () => {
-    console.log("Connection is closed");
-  });
+  socket
+    .on("close", () => {
+      console.log("File was saved");
+    })
 
-  socket.on("error", err => {
-    console.log(err.message);
-  });
+    .on("error", err => {
+      console.log(err.message);
+    });
 });
 
 // listen to server port XXXX
